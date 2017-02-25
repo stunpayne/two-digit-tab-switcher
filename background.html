@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="script.js">
+			
+	  		function onRequest(request, sender, sendResponse) {
+	    	// 	console.log(sender.tab ?
+      //       "from a content script:" + sender.tab.url :
+      //       "from the extension");
+			  	// if (request.greeting == "hello")
+	  	  		sendResponse("found");
+	  		}
+	  	chrome.extension.onRequest.addListener(onRequest);
+		</script>
+	</head>
+</html>
