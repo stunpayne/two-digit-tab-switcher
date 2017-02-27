@@ -87,12 +87,14 @@ chrome.runtime.onMessage.addListener(
         switch (request.type)
         {
             case 'start_listening':
-                isListening = true;
+                if(switchKey==request.eventKeyCode)
+                    isListening = true;
                 console.log('Now Listening');
                 break;
 
             case 'stop_listening':
-                isListening = false;
+                if(switchKey==request.eventKeyCode)
+                    isListening = false;
                 console.log('Not Listening')
                 break;
 
