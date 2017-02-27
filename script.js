@@ -86,6 +86,13 @@ chrome.runtime.onMessage.addListener(
     {
         switch (request.type)
         {
+            case 'query':
+                console.log('Queried for listening state ' + isListening);
+                sendResponse(
+                {
+                    state: isListening
+                });
+                break;
             case 'start_listening':
                 console.log(switchKey + " " + request.eventKeyCode);
                 if (switchKey == request.eventKeyCode)

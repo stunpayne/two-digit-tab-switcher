@@ -6,11 +6,26 @@ function onKeyPressed(event)
 {
     // console.log("Key Pressed")
     //  If Mac Command is clicked
-    if (event.keyCode == 91 || event.keyCode == 17)
+    if (event.metaKey && event.keyCode >= 48 && event.keyCode <= 57)
     {
-        console.log("COMMAND/CTRL PRESSED");
+        console.log("Preventing default action");
         event.preventDefault();
         event.stopPropagation();
+
+        console.log("DIGIT PRESSED");
+        chrome.runtime.sendMessage(
+        {
+            type: 'switch',
+            greeting: "hello",
+            eventKeyCode: event.keyCode
+        }, function(response)
+        {
+            // console.log(response);
+        });
+    }
+    else if (event.keyCode == 91 || event.keyCode == 17)
+    {
+        console.log("COMMAND/CTRL PRESSED");
         chrome.runtime.sendMessage(
         {
             type: 'start_listening',
@@ -21,21 +36,6 @@ function onKeyPressed(event)
             console.log(response);
         });
         // window.addEventListener("keydown", onKeyPressed);
-    }
-    else if (event.keyCode >= 48 && event.keyCode <= 57)
-    {
-        console.log("DIGIT PRESSED");
-        event.preventDefault();
-        event.stopPropagation();
-        chrome.runtime.sendMessage(
-        {
-            type: 'switch',
-            greeting: "hello",
-            eventKeyCode: event.keyCode
-        }, function(response)
-        {
-            // console.log(response);
-        });
     }
 }
 
@@ -49,8 +49,8 @@ function onSwitchKeyReleased(event)
     if (event.keyCode == 91 || event.keyCode == 17)
     {
         console.log("COMMAND/CTRL RELEASED");
-        event.preventDefault();
-        event.stopPropagation();
+        // event.preventDefault();
+        // event.stopPropagation();
         chrome.runtime.sendMessage(
         {
             type: 'stop_listening',
@@ -64,6 +64,9 @@ function onSwitchKeyReleased(event)
     }
 }
 
+/*  Destructor method to remove all event listeners
+    on reloading/re-enabling the plugin
+*/
 function destructor()
 {
     // Destruction is needed only once
