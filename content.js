@@ -48,6 +48,7 @@ function onSwitchKeyReleased(event)
         chrome.runtime.sendMessage(
         {
             type: 'stop_listening',
+            eventKeyCode: event.keyCode,
             greeting: "goodbye"
         }, function(response)
         {
