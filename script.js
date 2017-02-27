@@ -6,7 +6,13 @@ var isFirstNumberPressed = false;
 var lastDigit = 0;
 //  Timer that listens for second digit of tab index
 var timer = null;
-
+//  Map of OS vs Switch Key
+var switchKeyForOS = {
+    'win': 17,
+    "mac": 91
+};
+//  Switch Key for the current OS, default to 17
+var switchKey = 17;
 
 /*  Called when a key is pressed after the Command key
     If the key is a digit and is pressed for the first time then it is stored as
@@ -18,7 +24,7 @@ function getTabIndex(keyCode)
 {
     var finalTabIndex = 0;
     var currDigit = 0;
-    console.log("isFirstNumberPressed: " + isFirstNumberPressed);
+    // console.log("isFirstNumberPressed: " + isFirstNumberPressed);
     //  If Mac Command is clicked
     if (keyCode >= 48 && keyCode <= 57)
     {
@@ -28,7 +34,7 @@ function getTabIndex(keyCode)
             finalTabIndex = currDigit;
             lastDigit = currDigit;
             isFirstNumberPressed = true;
-            console.log("NUMBER " + keyCode + " CLICKED");
+            // console.log("NUMBER " + keyCode + " CLICKED");
             timer = setTimeout(function()
             {
                 if (isFirstNumberPressed)
@@ -48,7 +54,7 @@ function getTabIndex(keyCode)
     }
     else
     {
-        console.log("NON-NUMBER " + keyCode + " CLICKED");
+        // console.log("NON-NUMBER " + keyCode + " CLICKED");
     }
     return -1;
 }
@@ -95,7 +101,7 @@ chrome.runtime.onMessage.addListener(
                 {
                     console.log(request);
                     var index = getTabIndex(request.eventKeyCode);
-                    console.log('Tab index to switch to: ' + index);
+                    // console.log('Tab index to switch to: ' + index);
 
                     //  Switch tab on current window only
                     chrome.windows.getCurrent(function(window)
@@ -140,32 +146,55 @@ chrome.runtime.onMessage.addListener(
 // Add a `manifest` property to the `chrome` object.
 chrome.manifest = chrome.app.getDetails();
 
-var injectIntoTab = function (tab) {
+var injectIntoTab = function(tab)
+{
     // You could iterate through the content scripts here
     var scripts = chrome.manifest.content_scripts[0].js;
-    var i = 0, s = scripts.length;
-    for( ; i < s; i++ ) {
-        chrome.tabs.executeScript(tab.id, {
+    var i = 0,
+        s = scripts.length;
+    for (; i < s; i++)
+    {
+        chrome.tabs.executeScript(tab.id,
+        {
             file: scripts[i]
         });
     }
 }
 
 // Get all windows
-chrome.windows.getAll({
+chrome.windows.getAll(
+{
     populate: true
-}, function (windows) {
-    var i = 0, w = windows.length, currentWindow;
-    for( ; i < w; i++ ) {
+}, function(windows)
+{
+    var i = 0,
+        w = windows.length,
+        currentWindow;
+    for (; i < w; i++)
+    {
         currentWindow = windows[i];
-        var j = 0, t = currentWindow.tabs.length, currentTab;
-        for( ; j < t; j++ ) {
+        var j = 0,
+            t = currentWindow.tabs.length,
+            currentTab;
+        for (; j < t; j++)
+        {
             currentTab = currentWindow.tabs[j];
             // Skip chrome:// and https:// pages
-            if( (currentTab.url != null ) && ! currentTab.url.match(/(chrome):\/\//gi) ) {
+            if ((currentTab.url != null) && !currentTab.url.match(/(chrome):\/\//gi))
+            {
                 injectIntoTab(currentTab);
                 console.log("Reloaded tab: " + currentTab.url);
             }
         }
     }
+    chrome.runtime.getPlatformInfo(function(info)
+    {
+        curr_os = info.os;
+        if (switchKeyForOS.hasOwnProperty(curr_os))
+        {
+            // console.log(curr_os + " -> " + switchKeyForOS[curr_os]);
+            // console.log(curr_os.toUpperCase())
+            switchKey = switchKeyForOS[curr_os];
+        }
+    });
 });
