@@ -9,6 +9,8 @@ function onKeyPressed(event)
     if (event.keyCode == 91 || event.keyCode == 17)
     {
         console.log("COMMAND/CTRL PRESSED");
+        event.preventDefault();
+        event.stopPropagation();
         chrome.runtime.sendMessage(
         {
             type: 'start_listening',
@@ -23,6 +25,8 @@ function onKeyPressed(event)
     else if (event.keyCode >= 48 && event.keyCode <= 57)
     {
         console.log("DIGIT PRESSED");
+        event.preventDefault();
+        event.stopPropagation();
         chrome.runtime.sendMessage(
         {
             type: 'switch',
@@ -45,6 +49,8 @@ function onSwitchKeyReleased(event)
     if (event.keyCode == 91 || event.keyCode == 17)
     {
         console.log("COMMAND/CTRL RELEASED");
+        event.preventDefault();
+        event.stopPropagation();
         chrome.runtime.sendMessage(
         {
             type: 'stop_listening',
