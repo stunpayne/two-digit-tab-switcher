@@ -23,45 +23,6 @@ function onKeyPressed(event)
             // console.log(response);
         });
     }
-    else if (event.keyCode == 91 || event.keyCode == 17)
-    {
-        console.log("COMMAND/CTRL PRESSED");
-        chrome.runtime.sendMessage(
-        {
-            type: 'start_listening',
-            eventKeyCode: event.keyCode,
-            greeting: "hello"
-        }, function(response)
-        {
-            console.log(response);
-        });
-        // window.addEventListener("keydown", onKeyPressed);
-    }
-}
-
-/*  Called when a key is released
-    If the key is Command, then stop listening for more key events
-*/
-function onSwitchKeyReleased(event)
-{
-    // console.log("Key Released")
-    //  If Mac Command or Win Ctrl is clicked
-    if (event.keyCode == 91 || event.keyCode == 17)
-    {
-        console.log("COMMAND/CTRL RELEASED");
-        // event.preventDefault();
-        // event.stopPropagation();
-        chrome.runtime.sendMessage(
-        {
-            type: 'stop_listening',
-            eventKeyCode: event.keyCode,
-            greeting: "goodbye"
-        }, function(response)
-        {
-            // console.log(response);
-        });
-        // window.removeEventListener("keydown", onKeyPressed);
-    }
 }
 
 /*  Destructor method to remove all event listeners
@@ -73,11 +34,11 @@ function destructor()
     document.removeEventListener(destructionEvent, destructor);
     // Tear down content script: Unbind events, clear timers, restore DOM, etc.
     window.removeEventListener("keydown", onKeyPressed);
-    window.removeEventListener("keyup", onSwitchKeyReleased);
+    // window.removeEventListener("keyup", onSwitchKeyReleased);
     console.log("Removed previous listeners");
 }
 
-var destructionEvent = 'destructmyextension_' + chrome.runtime.id;
+var destructionEvent = 'destruct_extension_two_digit_tab_switcher';
 // Unload previous content script if needed
 document.dispatchEvent(new CustomEvent(destructionEvent));
 document.addEventListener(destructionEvent, destructor);
@@ -85,5 +46,5 @@ document.addEventListener(destructionEvent, destructor);
 
 //  Register initial listeners
 window.addEventListener("keydown", onKeyPressed);
-window.addEventListener("keyup", onSwitchKeyReleased);
+// window.addEventListener("keyup", onSwitchKeyReleased);
 console.log("Reloaded Tab Switch Plugin");

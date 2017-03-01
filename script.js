@@ -1,5 +1,5 @@
 //  Is extension listening for digit press events
-var isListening = false;
+var isListening = true;
 //  Has the first digit of the tab index already been set
 var isFirstNumberPressed = false;
 //  First digit of the two-digit tab index
@@ -86,26 +86,6 @@ chrome.runtime.onMessage.addListener(
     {
         switch (request.type)
         {
-            case 'query':
-                console.log('Queried for listening state ' + isListening);
-                sendResponse(
-                {
-                    state: isListening
-                });
-                break;
-            case 'start_listening':
-                console.log(switchKey + " " + request.eventKeyCode);
-                if (switchKey == request.eventKeyCode)
-                    isListening = true;
-                console.log('Now Listening' + isListening);
-                break;
-
-            case 'stop_listening':
-                if (switchKey == request.eventKeyCode)
-                    isListening = false;
-                console.log('Not Listening')
-                break;
-
             case 'switch':
                 if (isListening)
                 {
